@@ -3,138 +3,514 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Sheets Connection Test</title>
+    <title>Google Sheets Viewer</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
             text-align: center;
         }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
         button {
-            padding: 15px 30px;
-            font-size: 18px;
-            background: #4285f4;
+            padding: 12px 25px;
+            background: #3498db;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            margin: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
         }
+
         button:hover {
-            background: #3367d6;
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
         }
+
         button:disabled {
-            background: #cccccc;
+            background: #95a5a6;
+            transform: none;
+            box-shadow: none;
             cursor: not-allowed;
         }
-        #status {
-            margin: 20px 0;
+
+        .status {
             padding: 15px;
-            border-radius: 5px;
-            min-height: 20px;
+            margin: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
         }
-        .loading { background: #fff3cd; color: #856404; }
-        .success { background: #d4edda; color: #155724; }
-        .error { background: #f8d7da; color: #721c24; }
-        #result {
-            text-align: left;
+
+        .status.loading {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.success {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .sheets-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .sheet-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .sheet-card:hover {
+            transform: translateY(-5px);
+            border-color: #3498db;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .sheet-card.active {
+            border-color: #3498db;
             background: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-            white-space: pre-wrap;
+        }
+
+        .sheet-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .sheet-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        .sheet-info span {
+            background: #ecf0f1;
+            padding: 4px 8px;
+            border-radius: 6px;
+            color: #7f8c8d;
+        }
+
+        .table-container {
+            padding: 20px;
             display: none;
+        }
+
+        .table-container.active {
+            display: block;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .table-header h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        th {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #7f8c8d;
+            border-top: 1px solid #e9ecef;
+        }
+
+        @media (max-width: 768px) {
+            .sheets-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 100%;
+                max-width: 300px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Google Sheets Connection Test</h1>
-    <p>Testing connection to: <code id="url"></code></p>
-    
-    <button onclick="testConnection()">Test Connection</button>
-    
-    <div id="status"></div>
-    
-    <pre id="result"></pre>
+    <div class="container">
+        <header>
+            <h1>📊 Google Sheets Viewer</h1>
+            <p class="subtitle">View all your Google Sheets data in one place</p>
+        </header>
+
+        <div class="controls">
+            <button id="loadSheetsBtn" onclick="loadAllSheets()">
+                <span class="loading-spinner" style="display: none;"></span>
+                Load All Sheets
+            </button>
+            <button id="backBtn" onclick="showSheetsList()" style="display: none;">← Back to Sheets</button>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div id="content">
+            <div id="sheetsList" class="sheets-container"></div>
+            <div id="sheetData" class="table-container">
+                <div class="table-header">
+                    <h2 id="tableTitle">Sheet Data</h2>
+                </div>
+                <div id="tableContent"></div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Connected to Google Sheets via Apps Script | Hosted on GitHub Pages</p>
+        </footer>
+    </div>
 
     <script>
+        // Configuration
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx77-WWWNOlwD1rK_8Ip9CzNbZqBUQjprAazBRx2AJ-nIxVKuTCJqUWvdJ96OjD_t__/exec';
         
-        document.getElementById('url').textContent = SCRIPT_URL;
-
-        function setStatus(message, type) {
-            const status = document.getElementById('status');
-            status.textContent = message;
-            status.className = type || '';
+        // DOM Elements
+        const loadSheetsBtn = document.getElementById('loadSheetsBtn');
+        const backBtn = document.getElementById('backBtn');
+        const statusDiv = document.getElementById('status');
+        const sheetsList = document.getElementById('sheetsList');
+        const sheetData = document.getElementById('sheetData');
+        const tableTitle = document.getElementById('tableTitle');
+        const tableContent = document.getElementById('tableContent');
+        
+        // Global variables
+        let sheetsData = [];
+        let currentSheet = null;
+        
+        // Set status message
+        function setStatus(message, type = '') {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
         }
-
-        async function testConnection() {
-            setStatus('Testing connection...', 'loading');
-            
-            const testUrl = SCRIPT_URL + '?action=test';
-            
-            try {
-                console.log('Testing URL:', testUrl);
-                
-                // Method 1: Try direct fetch
-                const response = await fetch(testUrl);
-                console.log('Response status:', response.status);
-                console.log('Response headers:', response.headers);
-                
-                if (response.ok) {
-                    const data = await response.text();
-                    console.log('Raw response:', data);
-                    
-                    try {
-                        const jsonData = JSON.parse(data);
-                        setStatus('✓ Connection successful!', 'success');
-                        showResult(jsonData);
-                    } catch (e) {
-                        setStatus('✓ Connected but invalid JSON response', 'error');
-                        showResult({raw: data, error: 'Invalid JSON'});
-                    }
-                } else {
-                    setStatus('✗ HTTP Error: ' + response.status, 'error');
-                    showResult({error: 'HTTP ' + response.status});
-                }
-                
-            } catch (error) {
-                console.error('Fetch error:', error);
-                setStatus('✗ Connection failed: ' + error.message, 'error');
-                showResult({error: error.message});
-                
-                // Try alternative method
-                tryAlternativeMethods();
+        
+        // Show loading state
+        function setLoading(loading) {
+            const spinner = loadSheetsBtn.querySelector('.loading-spinner');
+            if (loading) {
+                spinner.style.display = 'inline-block';
+                loadSheetsBtn.disabled = true;
+            } else {
+                spinner.style.display = 'none';
+                loadSheetsBtn.disabled = false;
             }
         }
-
-        function tryAlternativeMethods() {
-            setStatus('Trying alternative methods...', 'loading');
+        
+        // CORS proxy function
+        async function makeRequest(action, params = {}) {
+            // Using CORS proxy to bypass restrictions
+            const proxyUrl = 'https://api.allorigins.win/raw?url=';
+            const targetUrl = new URL(SCRIPT_URL);
+            targetUrl.searchParams.append('action', action);
             
-            // Method 2: Try with image (simple GET test)
-            const img = new Image();
-            img.onload = function() {
-                setStatus('✓ Connection works with image load', 'success');
-                showResult({method: 'image', status: 'connected'});
-            };
-            img.onerror = function() {
-                setStatus('✗ All methods failed', 'error');
-                showResult({method: 'image', status: 'failed'});
-            };
-            img.src = SCRIPT_URL + '?action=test&t=' + Date.now();
+            // Add parameters
+            Object.keys(params).forEach(key => {
+                targetUrl.searchParams.append(key, params[key]);
+            });
+            
+            const url = proxyUrl + encodeURIComponent(targetUrl.toString());
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Request failed:', error);
+                
+                // Fallback: Try another CORS proxy
+                return await makeRequestWithFallback(action, params);
+            }
         }
-
-        function showResult(data) {
-            const result = document.getElementById('result');
-            result.textContent = JSON.stringify(data, null, 2);
-            result.style.display = 'block';
+        
+        // Fallback CORS proxy
+        async function makeRequestWithFallback(action, params = {}) {
+            const proxies = [
+                'https://cors-anywhere.herokuapp.com/',
+                'https://api.codetabs.com/v1/proxy?quest=',
+                'https://thingproxy.freeboard.io/fetch/'
+            ];
+            
+            const targetUrl = new URL(SCRIPT_URL);
+            targetUrl.searchParams.append('action', action);
+            
+            Object.keys(params).forEach(key => {
+                targetUrl.searchParams.append(key, params[key]);
+            });
+            
+            for (const proxy of proxies) {
+                try {
+                    const url = proxy + targetUrl.toString();
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                } catch (error) {
+                    console.log(`Proxy ${proxy} failed:`, error);
+                    continue;
+                }
+            }
+            
+            throw new Error('All CORS proxies failed');
         }
-
-        // Auto-test on page load
-        window.addEventListener('load', function() {
-            setStatus('Click "Test Connection" to begin', '');
+        
+        // Load all sheets
+        async function loadAllSheets() {
+            setStatus('Loading sheets data...', 'loading');
+            setLoading(true);
+            
+            try {
+                const result = await makeRequest('test');
+                
+                if (result && result.success) {
+                    sheetsData = result;
+                    displaySheetsList(result);
+                    setStatus(`Successfully loaded ${result.sheets.length} sheets`, 'success');
+                } else {
+                    setStatus('Failed to load sheets: ' + (result ? result.error : 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                setStatus('Connection failed: ' + error.message, 'error');
+                console.error('Error:', error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        // Display sheets list
+        function displaySheetsList(data) {
+            sheetsList.innerHTML = '';
+            sheetData.classList.remove('active');
+            backBtn.style.display = 'none';
+            
+            if (!data.sheets || data.sheets.length === 0) {
+                sheetsList.innerHTML = '<div class="empty-message">No sheets found</div>';
+                return;
+            }
+            
+            data.sheets.forEach(sheetName => {
+                const sheetInfo = data.details[sheetName];
+                const sheetCard = document.createElement('div');
+                sheetCard.className = 'sheet-card';
+                sheetCard.innerHTML = `
+                    <h3>${sheetName}</h3>
+                    <p>${sheetInfo.hasData ? '📊 Contains data' : '📭 Empty sheet'}</p>
+                    <div class="sheet-info">
+                        <span>${sheetInfo.rows} rows</span>
+                        <span>${sheetInfo.columns} cols</span>
+                    </div>
+                `;
+                
+                sheetCard.addEventListener('click', () => {
+                    // Remove active class from all cards
+                    document.querySelectorAll('.sheet-card').forEach(card => {
+                        card.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked card
+                    sheetCard.classList.add('active');
+                    
+                    // Display sheet data
+                    displaySheetData(sheetName, sheetInfo);
+                });
+                
+                sheetsList.appendChild(sheetCard);
+            });
+        }
+        
+        // Display sheet data
+        function displaySheetData(sheetName, sheetInfo) {
+            currentSheet = sheetName;
+            tableTitle.textContent = `Data from "${sheetName}"`;
+            
+            sheetsList.style.display = 'none';
+            sheetData.classList.add('active');
+            backBtn.style.display = 'block';
+            
+            if (!sheetInfo.hasData) {
+                tableContent.innerHTML = '<div class="empty-message">This sheet contains no data</div>';
+                return;
+            }
+            
+            // Create table
+            const table = document.createElement('table');
+            
+            // Create header row
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            
+            sheetInfo.headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header || 'Column';
+                headerRow.appendChild(th);
+            });
+            
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            
+            // Create table body with sample message
+            const tbody = document.createElement('tbody');
+            const infoRow = document.createElement('tr');
+            const infoCell = document.createElement('td');
+            infoCell.colSpan = sheetInfo.headers.length;
+            infoCell.innerHTML = `
+                <div style="text-align: center; padding: 30px;">
+                    <h3>📋 Sheet Structure</h3>
+                    <p><strong>${sheetInfo.rows} rows</strong> × <strong>${sheetInfo.columns} columns</strong></p>
+                    <p style="color: #666; margin-top: 10px;">
+                        Headers: ${sheetInfo.headers.join(', ')}
+                    </p>
+                    <p style="color: #888; font-size: 0.9em; margin-top: 15px;">
+                        To view actual data, ensure your Apps Script is properly configured and deployed.
+                    </p>
+                </div>
+            `;
+            infoRow.appendChild(infoCell);
+            tbody.appendChild(infoRow);
+            
+            table.appendChild(tbody);
+            tableContent.innerHTML = '';
+            tableContent.appendChild(table);
+        }
+        
+        // Show sheets list
+        function showSheetsList() {
+            sheetsList.style.display = 'grid';
+            sheetData.classList.remove('active');
+            backBtn.style.display = 'none';
+            setStatus('', '');
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setStatus('Click "Load All Sheets" to view your Google Sheets data', '');
         });
     </script>
 </body>
