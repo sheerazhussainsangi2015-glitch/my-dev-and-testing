@@ -1,84 +1,431 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>GSheet Form Submission</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Platform</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
-        input, textarea, button { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
-        .response-message { margin-top: 15px; padding: 10px; border-radius: 4px; display: none; }
-        .success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
-        .error { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .nav {
+            background: #34495e;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .nav button {
+            background: transparent;
+            border: 2px solid #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav button:hover {
+            background: #3498db;
+            transform: translateY(-2px);
+        }
+
+        .content {
+            padding: 40px;
+            min-height: 500px;
+        }
+
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 2px solid #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .course-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .course-card p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            background: #ecf0f1;
+            border-radius: 10px;
+            height: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .lesson-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .lesson-item {
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lesson-item:hover {
+            background: #f8f9fa;
+            border-color: #3498db;
+        }
+
+        .lesson-item.completed {
+            background: #d5f4e6;
+            border-color: #27ae60;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .success {
+            background: #d5f4e6;
+            color: #27ae60;
+            border: 1px solid #27ae60;
+        }
+
+        .error {
+            background: #fadbd8;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+
+        .user-info {
+            background: #34495e;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <h1>LearnHub Academy</h1>
+            <p>Your journey to knowledge starts here</p>
+        </div>
 
-    <h2>Submit to Google Sheet</h2>
-    <form id="myForm">
-        <label for="Name">Name:</label>
-        <input type="text" id="Name" name="Name" required>
+        <div class="nav">
+            <button onclick="showSection('login')">Login</button>
+            <button onclick="showSection('signup')">Sign Up</button>
+            <button onclick="showSection('courses')" id="coursesBtn" class="hidden">Courses</button>
+            <button onclick="showSection('progress')" id="progressBtn" class="hidden">My Progress</button>
+            <button onclick="logout()" id="logoutBtn" class="hidden">Logout</button>
+        </div>
 
-        <label for="Email">Email:</label>
-        <input type="email" id="Email" name="Email" required>
+        <div class="content">
+            <!-- Login Section -->
+            <div id="login" class="form-container">
+                <h2>Login to Your Account</h2>
+                <div id="loginMessage"></div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email:</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password:</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn">Login</button>
+                </form>
+            </div>
 
-        <label for="Message">Message:</label>
-        <textarea id="Message" name="Message" rows="4" required></textarea>
+            <!-- Signup Section -->
+            <div id="signup" class="form-container hidden">
+                <h2>Create New Account</h2>
+                <div id="signupMessage"></div>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="signupName">Full Name:</label>
+                        <input type="text" id="signupName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email:</label>
+                        <input type="email" id="signupEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password:</label>
+                        <input type="password" id="signupPassword" required>
+                    </div>
+                    <button type="submit" class="btn">Sign Up</button>
+                </form>
+            </div>
 
-        <button type="submit" id="submit-button">Submit Data</button>
-    </form>
+            <!-- Courses Section -->
+            <div id="courses" class="hidden">
+                <h2>Available Courses</h2>
+                <div id="userInfo" class="user-info hidden"></div>
+                <div id="coursesMessage"></div>
+                <div class="course-grid" id="coursesGrid">
+                    <!-- Courses will be loaded here -->
+                </div>
+            </div>
 
-    <div id="response" class="response-message"></div>
+            <!-- Progress Section -->
+            <div id="progress" class="hidden">
+                <h2>My Learning Progress</h2>
+                <div id="progressMessage"></div>
+                <div id="progressContent">
+                    <!-- Progress will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // *** REPLACE THIS WITH YOUR DEPLOYED GOOGLE APPS SCRIPT URL ***
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxMW_kVXuCiXsM_s5sTYbMaC1trD0CqkqH4oxB7mn602KhR-U0r8efAktiY2unWviuK/exec';
-        const form = document.getElementById('myForm');
-        const responseDiv = document.getElementById('response');
-        const submitButton = document.getElementById('submit-button');
+        let currentUser = null;
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            submitButton.disabled = true;
-            submitButton.textContent = 'Sending...';
-            responseDiv.style.display = 'none';
-            responseDiv.classList.remove('success', 'error');
-
-            // Collect form data using FormData
-            const formData = new FormData(form);
-            
-            // Send the data using the Fetch API
-            fetch(scriptURL, { 
-                method: 'POST',
-                body: formData // FormData object is automatically sent as application/x-www-form-urlencoded
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.result === 'success') {
-                    responseDiv.textContent = '✅ Success! Data submitted to Google Sheet.';
-                    responseDiv.classList.add('success');
-                    form.reset(); // Clear the form on success
-                } else {
-                    throw new Error(data.error || 'Unknown error occurred in Apps Script.');
-                }
-            })
-            .catch(error => {
-                console.error('Submission Error:', error);
-                responseDiv.textContent = `❌ Error: ${error.message}`;
-                responseDiv.classList.add('error');
-            })
-            .finally(() => {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Submit Data';
-                responseDiv.style.display = 'block';
+        // Show specific section and hide others
+        function showSection(sectionName) {
+            document.querySelectorAll('.content > div').forEach(div => {
+                div.classList.add('hidden');
             });
-        });
-    </script>
+            document.getElementById(sectionName).classList.remove('hidden');
+        }
 
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await google.script.run.withSuccessHandler(handleLoginResponse).withFailureHandler(handleError).loginUser(email, password);
+            } catch (error) {
+                handleError(error);
+            }
+        });
+
+        // Handle signup form submission
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            try {
+                const response = await google.script.run.withSuccessHandler(handleSignupResponse).withFailureHandler(handleError).signupUser(name, email, password);
+            } catch (error) {
+                handleError(error);
+            }
+        });
+
+        function handleLoginResponse(response) {
+            if (response.success) {
+                currentUser = response.user;
+                showUserSections();
+                showSection('courses');
+                loadCourses();
+                showMessage('loginMessage', 'Login successful!', 'success');
+            } else {
+                showMessage('loginMessage', response.message, 'error');
+            }
+        }
+
+        function handleSignupResponse(response) {
+            if (response.success) {
+                showMessage('signupMessage', 'Account created successfully! Please login.', 'success');
+                document.getElementById('signupForm').reset();
+                setTimeout(() => showSection('login'), 2000);
+            } else {
+                showMessage('signupMessage', response.message, 'error');
+            }
+        }
+
+        function handleError(error) {
+            console.error('Error:', error);
+            showMessage('loginMessage', 'An error occurred. Please try again.', 'error');
+        }
+
+        function showUserSections() {
+            document.getElementById('coursesBtn').classList.remove('hidden');
+            document.getElementById('progressBtn').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+            document.querySelectorAll('.nav button:not(#coursesBtn):not(#progressBtn):not(#logoutBtn)').forEach(btn => {
+                btn.classList.add('hidden');
+            });
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('coursesBtn').classList.add('hidden');
+            document.getElementById('progressBtn').classList.add('hidden');
+            document.getElementById('logoutBtn').classList.add('hidden');
+            document.querySelectorAll('.nav button:not(#coursesBtn):not(#progressBtn):not(#logoutBtn)').forEach(btn => {
+                btn.classList.remove('hidden');
+            });
+            showSection('login');
+        }
+
+        function showMessage(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="message ${type}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        async function loadCourses() {
+            try {
+                const response = await google.script.run.withSuccessHandler(displayCourses).withFailureHandler(handleError).getCourses();
+            } catch (error) {
+                handleError(error);
+            }
+        }
+
+        function displayCourses(courses) {
+            const coursesGrid = document.getElementById('coursesGrid');
+            const userInfo = document.getElementById('userInfo');
+            
+            userInfo.innerHTML = `Welcome, ${currentUser.name}!`;
+            userInfo.classList.remove('hidden');
+
+            coursesGrid.innerHTML = courses.map(course => `
+                <div class="course-card">
+                    <h3>${course.title}</h3>
+                    <p>${course.description}</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${course.progress || 0}%"></div>
+                    </div>
+                    <p><strong>Progress: ${course.progress || 0}%</strong></p>
+                    <button onclick="viewCourse('${course.id}')" class="btn" style="margin-top: 15px;">
+                        ${course.progress > 0 ? 'Continue Learning' : 'Start Learning'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function viewCourse(courseId) {
+            // This would open the course details and lessons
+            alert(`Opening course: ${courseId}`);
+            // In a real implementation, you would load and display the course lessons
+        }
+
+        // Initialize the page
+        showSection('login');
+    </script>
 </body>
 </html>
