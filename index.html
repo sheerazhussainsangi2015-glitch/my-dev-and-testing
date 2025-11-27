@@ -1,365 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Sheets Data Viewer</title>
+    <title>GSheet Form Submission</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #333;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        
-        .subtitle {
-            color: #7f8c8d;
-            font-size: 1.1rem;
-        }
-        
-        .status {
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            text-align: center;
-            font-weight: bold;
-        }
-        
-        .status.connected {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .status.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        button {
-            padding: 10px 20px;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        
-        button:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .data-section {
-            margin-top: 30px;
-        }
-        
-        .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 5px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #e1e1e1;
-        }
-        
-        th {
-            background-color: #3498db;
-            color: white;
-            font-weight: 600;
-        }
-        
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        
-        tr:hover {
-            background-color: #e8f4fc;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 20px;
-            font-size: 1.2rem;
-            color: #7f8c8d;
-        }
-        
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        @media (max-width: 768px) {
-            table {
-                display: block;
-                overflow-x: auto;
-            }
-            
-            .controls {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            button {
-                width: 100%;
-                max-width: 300px;
-            }
-        }
+        body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        input, textarea, button { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
+        .response-message { margin-top: 15px; padding: 10px; border-radius: 4px; display: none; }
+        .success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Google Sheets Data Viewer</h1>
-            <p class="subtitle">Connected to your Google Apps Script Web App</p>
-            <div id="status" class="status">Checking connection...</div>
-        </header>
-        
-        <div class="controls">
-            <button id="checkConnection">Test Connection</button>
-            <button id="getCourses">Load Courses</button>
-            <button id="getUsers">Load Users</button>
-            <button id="getAllData">Load All Data</button>
-        </div>
-        
-        <div id="dataContainer">
-            <!-- Data will be loaded here -->
-        </div>
-    </div>
+
+    <h2>Submit to Google Sheet</h2>
+    <form id="myForm">
+        <label for="Name">Name:</label>
+        <input type="text" id="Name" name="Name" required>
+
+        <label for="Email">Email:</label>
+        <input type="email" id="Email" name="Email" required>
+
+        <label for="Message">Message:</label>
+        <textarea id="Message" name="Message" rows="4" required></textarea>
+
+        <button type="submit" id="submit-button">Submit Data</button>
+    </form>
+
+    <div id="response" class="response-message"></div>
 
     <script>
-        // Your Google Apps Script URL
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMW_kVXuCiXsM_s5sTYbMaC1trD0CqkqH4oxB7mn602KhR-U0r8efAktiY2unWviuK/exec';
-        
-        // DOM Elements
-        const statusEl = document.getElementById('status');
-        const dataContainer = document.getElementById('dataContainer');
-        const checkConnectionBtn = document.getElementById('checkConnection');
-        const getCoursesBtn = document.getElementById('getCourses');
-        const getUsersBtn = document.getElementById('getUsers');
-        const getAllDataBtn = document.getElementById('getAllData');
-        
-        // Test connection to Google Apps Script
-        async function testConnection() {
-            showLoading('Testing connection to Google Apps Script...');
+        // *** REPLACE THIS WITH YOUR DEPLOYED GOOGLE APPS SCRIPT URL ***
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxMW_kVXuCiXsM_s5sTYbMaC1trD0CqkqH4oxB7mn602KhR-U0r8efAktiY2unWviuK/exec';
+        const form = document.getElementById('myForm');
+        const responseDiv = document.getElementById('response');
+        const submitButton = document.getElementById('submit-button');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            try {
-                const response = await fetch(SCRIPT_URL);
-                if (response.ok) {
-                    statusEl.textContent = '✓ Successfully connected to Google Apps Script';
-                    statusEl.className = 'status connected';
-                } else {
-                    throw new Error(`HTTP error: ${response.status}`);
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending...';
+            responseDiv.style.display = 'none';
+            responseDiv.classList.remove('success', 'error');
+
+            // Collect form data using FormData
+            const formData = new FormData(form);
+            
+            // Send the data using the Fetch API
+            fetch(scriptURL, { 
+                method: 'POST',
+                body: formData // FormData object is automatically sent as application/x-www-form-urlencoded
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
                 }
-            } catch (error) {
-                statusEl.textContent = `✗ Connection failed: ${error.message}`;
-                statusEl.className = 'status error';
-            } finally {
-                hideLoading();
-            }
-        }
-        
-        // Get all courses from Google Sheets
-        async function getCourses() {
-            showLoading('Loading courses data...');
-            
-            try {
-                const response = await fetch(`${SCRIPT_URL}?action=getCourses`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    displayData(data.courses, 'Courses');
+                return response.json();
+            })
+            .then(data => {
+                if (data.result === 'success') {
+                    responseDiv.textContent = '✅ Success! Data submitted to Google Sheet.';
+                    responseDiv.classList.add('success');
+                    form.reset(); // Clear the form on success
                 } else {
-                    throw new Error(data.error || 'Failed to load courses');
+                    throw new Error(data.error || 'Unknown error occurred in Apps Script.');
                 }
-            } catch (error) {
-                displayError(`Error loading courses: ${error.message}`);
-            } finally {
-                hideLoading();
-            }
-        }
-        
-        // Get all users from Google Sheets
-        async function getUsers() {
-            showLoading('Loading users data...');
-            
-            try {
-                const response = await fetch(`${SCRIPT_URL}?action=getUsers`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    displayData(data.users, 'Users');
-                } else {
-                    throw new Error(data.error || 'Failed to load users');
-                }
-            } catch (error) {
-                displayError(`Error loading users: ${error.message}`);
-            } finally {
-                hideLoading();
-            }
-        }
-        
-        // Get all available data
-        async function getAllData() {
-            showLoading('Loading all data...');
-            
-            try {
-                // In a real implementation, you would call multiple endpoints
-                // For this demo, we'll just load courses
-                const response = await fetch(`${SCRIPT_URL}?action=getCourses`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    displayData(data.courses, 'All Data (Courses)');
-                } else {
-                    throw new Error(data.error || 'Failed to load data');
-                }
-            } catch (error) {
-                displayError(`Error loading data: ${error.message}`);
-            } finally {
-                hideLoading();
-            }
-        }
-        
-        // Display data in a table
-        function displayData(data, title) {
-            if (!data || data.length === 0) {
-                dataContainer.innerHTML = `<div class="section-title">${title}</div><p>No data available</p>`;
-                return;
-            }
-            
-            // Get table headers from the keys of the first object
-            const headers = Object.keys(data[0]);
-            
-            let html = `
-                <div class="data-section">
-                    <div class="section-title">${title}</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                ${headers.map(header => `<th>${header}</th>`).join('')}
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-            
-            // Add table rows
-            data.forEach(item => {
-                html += '<tr>';
-                headers.forEach(header => {
-                    let value = item[header];
-                    // Format dates if needed
-                    if (value instanceof Object && !(value instanceof String)) {
-                        value = JSON.stringify(value);
-                    }
-                    html += `<td>${value}</td>`;
-                });
-                html += '</tr>';
+            })
+            .catch(error => {
+                console.error('Submission Error:', error);
+                responseDiv.textContent = `❌ Error: ${error.message}`;
+                responseDiv.classList.add('error');
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Data';
+                responseDiv.style.display = 'block';
             });
-            
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-            
-            dataContainer.innerHTML = html;
-        }
-        
-        // Display error message
-        function displayError(message) {
-            dataContainer.innerHTML = `
-                <div class="status error">
-                    ${message}
-                </div>
-            `;
-        }
-        
-        // Show loading indicator
-        function showLoading(message) {
-            dataContainer.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <div>${message}</div>
-                </div>
-            `;
-        }
-        
-        // Hide loading indicator
-        function hideLoading() {
-            // Loading is handled by replacing content, so no need to explicitly hide
-        }
-        
-        // Event listeners
-        checkConnectionBtn.addEventListener('click', testConnection);
-        getCoursesBtn.addEventListener('click', getCourses);
-        getUsersBtn.addEventListener('click', getUsers);
-        getAllDataBtn.addEventListener('click', getAllData);
-        
-        // Test connection on page load
-        window.addEventListener('DOMContentLoaded', testConnection);
+        });
     </script>
+
 </body>
 </html>
