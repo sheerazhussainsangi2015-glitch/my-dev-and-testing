@@ -3,429 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learning Platform</title>
+    <title>User Authentication Demo</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* Custom styles for a cleaner UI */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .nav {
-            background: #34495e;
-            padding: 15px;
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
             display: flex;
             justify-content: center;
-            gap: 20px;
-        }
-
-        .nav button {
-            background: transparent;
-            border: 2px solid #3498db;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .nav button:hover {
-            background: #3498db;
-            transform: translateY(-2px);
-        }
-
-        .content {
-            padding: 40px;
-            min-height: 500px;
-        }
-
-        .form-container {
-            max-width: 400px;
-            margin: 0 auto;
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .course-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        .course-card {
-            background: white;
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border: 2px solid #f8f9fa;
-            transition: all 0.3s ease;
-        }
-
-        .course-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-
-        .course-card h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-
-        .course-card p {
-            color: #7f8c8d;
-            margin-bottom: 20px;
-        }
-
-        .progress-bar {
-            background: #ecf0f1;
-            border-radius: 10px;
-            height: 8px;
-            margin-bottom: 10px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-            height: 100%;
-            transition: width 0.3s ease;
-        }
-
-        .lesson-list {
-            list-style: none;
-            margin-top: 20px;
-        }
-
-        .lesson-item {
-            padding: 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .lesson-item:hover {
-            background: #f8f9fa;
-            border-color: #3498db;
-        }
-
-        .lesson-item.completed {
-            background: #d5f4e6;
-            border-color: #27ae60;
-        }
-
-        .message {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .success {
-            background: #d5f4e6;
-            color: #27ae60;
-            border: 1px solid #27ae60;
-        }
-
-        .error {
-            background: #fadbd8;
-            color: #e74c3c;
-            border: 1px solid #e74c3c;
-        }
-
-        .user-info {
-            background: #34495e;
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            align-items: center;
+            min-height: 100vh;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>LearnHub Academy</h1>
-            <p>Your journey to knowledge starts here</p>
-        </div>
 
-        <div class="nav">
-            <button onclick="showSection('login')">Login</button>
-            <button onclick="showSection('signup')">Sign Up</button>
-            <button onclick="showSection('courses')" id="coursesBtn" class="hidden">Courses</button>
-            <button onclick="showSection('progress')" id="progressBtn" class="hidden">My Progress</button>
-            <button onclick="logout()" id="logoutBtn" class="hidden">Logout</button>
-        </div>
+    <div id="app-container" class="w-full max-w-md p-8 bg-white shadow-xl rounded-xl">
+        
+        <div id="auth-view">
+            <h1 id="view-title" class="text-3xl font-bold text-center text-gray-800 mb-6">Sign Up</h1>
+            
+            <!-- Message/Response Display -->
+            <div id="message-area" class="p-3 mb-4 rounded-lg hidden"></div>
 
-        <div class="content">
-            <!-- Login Section -->
-            <div id="login" class="form-container">
-                <h2>Login to Your Account</h2>
-                <div id="loginMessage"></div>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="loginEmail">Email:</label>
-                        <input type="email" id="loginEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Password:</label>
-                        <input type="password" id="loginPassword" required>
-                    </div>
-                    <button type="submit" class="btn">Login</button>
-                </form>
-            </div>
-
-            <!-- Signup Section -->
-            <div id="signup" class="form-container hidden">
-                <h2>Create New Account</h2>
-                <div id="signupMessage"></div>
-                <form id="signupForm">
-                    <div class="form-group">
-                        <label for="signupName">Full Name:</label>
-                        <input type="text" id="signupName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="signupEmail">Email:</label>
-                        <input type="email" id="signupEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="signupPassword">Password:</label>
-                        <input type="password" id="signupPassword" required>
-                    </div>
-                    <button type="submit" class="btn">Sign Up</button>
-                </form>
-            </div>
-
-            <!-- Courses Section -->
-            <div id="courses" class="hidden">
-                <h2>Available Courses</h2>
-                <div id="userInfo" class="user-info hidden"></div>
-                <div id="coursesMessage"></div>
-                <div class="course-grid" id="coursesGrid">
-                    <!-- Courses will be loaded here -->
+            <!-- Sign Up Form -->
+            <form id="signup-form" class="space-y-4">
+                <div>
+                    <label for="signup-name" class="block text-sm font-medium text-gray-700">Name</label>
+                    <input type="text" id="signup-name" name="name" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
-            </div>
-
-            <!-- Progress Section -->
-            <div id="progress" class="hidden">
-                <h2>My Learning Progress</h2>
-                <div id="progressMessage"></div>
-                <div id="progressContent">
-                    <!-- Progress will be loaded here -->
+                <div>
+                    <label for="signup-email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="signup-email" name="email" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
+                <div>
+                    <label for="signup-password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="signup-password" name="password" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <button type="submit" id="signup-btn"
+                        class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150">
+                    Sign Up
+                </button>
+            </form>
+
+            <!-- Login Form (Initially hidden) -->
+            <form id="login-form" class="space-y-4 hidden">
+                <div>
+                    <label for="login-email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="login-email" name="email" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="login-password" name="password" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <button type="submit" id="login-btn"
+                        class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150">
+                    Log In
+                </button>
+            </form>
+
+            <!-- Toggle Button -->
+            <div class="mt-6 text-center">
+                <button id="toggle-view" class="text-sm text-indigo-600 hover:text-indigo-800 transition duration-150">
+                    Already have an account? Switch to Log In
+                </button>
             </div>
+        </div>
+        
+        <!-- Logged In View (Initially hidden) -->
+        <div id="welcome-view" class="hidden text-center p-8 bg-gray-50 rounded-lg">
+            <svg class="mx-auto h-12 w-12 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <h2 class="mt-4 text-2xl font-semibold text-gray-900">Welcome, <span id="welcome-name"></span>!</h2>
+            <p class="mt-2 text-gray-600">You have successfully authenticated with Google Apps Script.</p>
+            <button id="logout-btn" class="mt-6 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150">
+                Log Out
+            </button>
         </div>
     </div>
 
     <script>
-        let currentUser = null;
+        // 🚨 CRITICAL: REPLACE THIS URL with your deployed Apps Script Web App URL
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwR_XPJ7HMx-bO-_bW2Gl4dL3gDfOjTDAPnJbzl2iWMP9pTjdoDhTBzt7oTE9IuqI7oFA/exec';
 
-        // Show specific section and hide others
-        function showSection(sectionName) {
-            document.querySelectorAll('.content > div').forEach(div => {
-                div.classList.add('hidden');
-            });
-            document.getElementById(sectionName).classList.remove('hidden');
+        // UI elements
+        const authView = document.getElementById('auth-view');
+        const welcomeView = document.getElementById('welcome-view');
+        const viewTitle = document.getElementById('view-title');
+        const messageArea = document.getElementById('message-area');
+        const signupForm = document.getElementById('signup-form');
+        const loginForm = document.getElementById('login-form');
+        const toggleViewButton = document.getElementById('toggle-view');
+        const logoutButton = document.getElementById('logout-btn');
+        const welcomeName = document.getElementById('welcome-name');
+
+        // State
+        let isLoginView = false;
+
+        // --- Utility Functions ---
+
+        function showMessage(type, content) {
+            messageArea.textContent = content;
+            messageArea.classList.remove('hidden', 'bg-red-100', 'bg-green-100', 'text-red-700', 'text-green-700');
+            if (type === 'success') {
+                messageArea.classList.add('bg-green-100', 'text-green-700');
+            } else if (type === 'error') {
+                messageArea.classList.add('bg-red-100', 'text-red-700');
+            }
+            // Clear message after 5 seconds
+            setTimeout(() => { messageArea.classList.add('hidden'); }, 5000);
+        }
+        
+        function setView(loggedIn = false, name = '') {
+            if (loggedIn) {
+                authView.classList.add('hidden');
+                welcomeView.classList.remove('hidden');
+                welcomeName.textContent = name;
+            } else {
+                authView.classList.remove('hidden');
+                welcomeView.classList.add('hidden');
+                // Ensure we are back on the signup form by default on logout
+                showSignupView();
+            }
         }
 
-        // Handle login form submission
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        function showLoginView() {
+            isLoginView = true;
+            viewTitle.textContent = "Log In";
+            signupForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            toggleViewButton.textContent = "Don't have an account? Switch to Sign Up";
+            messageArea.classList.add('hidden');
+        }
+
+        function showSignupView() {
+            isLoginView = false;
+            viewTitle.textContent = "Sign Up";
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+            toggleViewButton.textContent = "Already have an account? Switch to Log In";
+            messageArea.classList.add('hidden');
+        }
+
+        // --- Event Handlers ---
+
+        async function submitForm(e, action) {
             e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
+
+            // Disable buttons and show loading state
+            const button = e.target.querySelector('button[type="submit"]');
+            const originalText = button.textContent;
+            button.disabled = true;
+            button.textContent = 'Processing...';
+
+            // Create form data object
+            const formData = new FormData(e.target);
+            formData.append('action', action); // Append the action for Apps Script
 
             try {
-                const response = await google.script.run.withSuccessHandler(handleLoginResponse).withFailureHandler(handleError).loginUser(email, password);
+                const response = await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    showMessage('success', data.message);
+                    // On success, transition to the welcome view
+                    setView(true, data.name || formData.get('name') || 'User');
+                    e.target.reset();
+                } else {
+                    showMessage('error', data.message || 'An unknown error occurred.');
+                }
+
             } catch (error) {
-                handleError(error);
+                console.error('Fetch Error:', error);
+                showMessage('error', 'Network error. Please check the Apps Script URL and deployment status.');
+            } finally {
+                button.disabled = false;
+                button.textContent = originalText;
             }
+        }
+
+        // --- Main Initialization ---
+
+        toggleViewButton.addEventListener('click', () => {
+            isLoginView ? showSignupView() : showLoginView();
         });
 
-        // Handle signup form submission
-        document.getElementById('signupForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const name = document.getElementById('signupName').value;
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-
-            try {
-                const response = await google.script.run.withSuccessHandler(handleSignupResponse).withFailureHandler(handleError).signupUser(name, email, password);
-            } catch (error) {
-                handleError(error);
-            }
-        });
-
-        function handleLoginResponse(response) {
-            if (response.success) {
-                currentUser = response.user;
-                showUserSections();
-                showSection('courses');
-                loadCourses();
-                showMessage('loginMessage', 'Login successful!', 'success');
-            } else {
-                showMessage('loginMessage', response.message, 'error');
-            }
-        }
-
-        function handleSignupResponse(response) {
-            if (response.success) {
-                showMessage('signupMessage', 'Account created successfully! Please login.', 'success');
-                document.getElementById('signupForm').reset();
-                setTimeout(() => showSection('login'), 2000);
-            } else {
-                showMessage('signupMessage', response.message, 'error');
-            }
-        }
-
-        function handleError(error) {
-            console.error('Error:', error);
-            showMessage('loginMessage', 'An error occurred. Please try again.', 'error');
-        }
-
-        function showUserSections() {
-            document.getElementById('coursesBtn').classList.remove('hidden');
-            document.getElementById('progressBtn').classList.remove('hidden');
-            document.getElementById('logoutBtn').classList.remove('hidden');
-            document.querySelectorAll('.nav button:not(#coursesBtn):not(#progressBtn):not(#logoutBtn)').forEach(btn => {
-                btn.classList.add('hidden');
-            });
-        }
-
-        function logout() {
-            currentUser = null;
-            document.getElementById('coursesBtn').classList.add('hidden');
-            document.getElementById('progressBtn').classList.add('hidden');
-            document.getElementById('logoutBtn').classList.add('hidden');
-            document.querySelectorAll('.nav button:not(#coursesBtn):not(#progressBtn):not(#logoutBtn)').forEach(btn => {
-                btn.classList.remove('hidden');
-            });
-            showSection('login');
-        }
-
-        function showMessage(containerId, message, type) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = `<div class="message ${type}">${message}</div>`;
-            setTimeout(() => {
-                container.innerHTML = '';
-            }, 5000);
-        }
-
-        async function loadCourses() {
-            try {
-                const response = await google.script.run.withSuccessHandler(displayCourses).withFailureHandler(handleError).getCourses();
-            } catch (error) {
-                handleError(error);
-            }
-        }
-
-        function displayCourses(courses) {
-            const coursesGrid = document.getElementById('coursesGrid');
-            const userInfo = document.getElementById('userInfo');
-            
-            userInfo.innerHTML = `Welcome, ${currentUser.name}!`;
-            userInfo.classList.remove('hidden');
-
-            coursesGrid.innerHTML = courses.map(course => `
-                <div class="course-card">
-                    <h3>${course.title}</h3>
-                    <p>${course.description}</p>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${course.progress || 0}%"></div>
-                    </div>
-                    <p><strong>Progress: ${course.progress || 0}%</strong></p>
-                    <button onclick="viewCourse('${course.id}')" class="btn" style="margin-top: 15px;">
-                        ${course.progress > 0 ? 'Continue Learning' : 'Start Learning'}
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        function viewCourse(courseId) {
-            // This would open the course details and lessons
-            alert(`Opening course: ${courseId}`);
-            // In a real implementation, you would load and display the course lessons
-        }
-
-        // Initialize the page
-        showSection('login');
+        signupForm.addEventListener('submit', (e) => submitForm(e, 'SIGNUP'));
+        loginForm.addEventListener('submit', (e) => submitForm(e, 'LOGIN'));
+        logoutButton.addEventListener('click', () => setView(false));
+        
+        // Start on the Sign Up view
+        showSignupView();
+        
     </script>
 </body>
 </html>
