@@ -1,216 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Authentication Demo</title>
-    <!-- Load Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Test Backend Connection</title>
     <style>
-        /* Custom styles for a cleaner UI */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f7f9fb;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .test-area { background: #f5f5f5; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        button { background: #007cba; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        .result { margin-top: 20px; padding: 15px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
-
-    <div id="app-container" class="w-full max-w-md p-8 bg-white shadow-xl rounded-xl">
+    <h1>🔧 Test Your Backend Connection</h1>
+    
+    <div class="test-area">
+        <h3>Your API URL:</h3>
+        <code id="apiUrl">https://script.google.com/macros/s/AKfycbwAedbTghrO10YxXeW8UP8RpHrQpLanWTjilDpWhimVMHymGSqeyFw8X_o1Jj39-Jjq/exec</code>
         
-        <div id="auth-view">
-            <h1 id="view-title" class="text-3xl font-bold text-center text-gray-800 mb-6">Sign Up</h1>
-            
-            <!-- Message/Response Display -->
-            <div id="message-area" class="p-3 mb-4 rounded-lg hidden"></div>
-
-            <!-- Sign Up Form -->
-            <form id="signup-form" class="space-y-4">
-                <div>
-                    <label for="signup-name" class="block text-sm font-medium text-gray-700">Name</label>
-                    <input type="text" id="signup-name" name="name" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div>
-                    <label for="signup-email" class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" id="signup-email" name="email" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div>
-                    <label for="signup-password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="signup-password" name="password" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <button type="submit" id="signup-btn"
-                        class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150">
-                    Sign Up
-                </button>
-            </form>
-
-            <!-- Login Form (Initially hidden) -->
-            <form id="login-form" class="space-y-4 hidden">
-                <div>
-                    <label for="login-email" class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" id="login-email" name="email" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div>
-                    <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="login-password" name="password" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <button type="submit" id="login-btn"
-                        class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150">
-                    Log In
-                </button>
-            </form>
-
-            <!-- Toggle Button -->
-            <div class="mt-6 text-center">
-                <button id="toggle-view" class="text-sm text-indigo-600 hover:text-indigo-800 transition duration-150">
-                    Already have an account? Switch to Log In
-                </button>
-            </div>
-        </div>
+        <h3>Test Actions:</h3>
+        <button onclick="testConnection()">Test Basic Connection</button>
+        <button onclick="testLogin()">Test Login</button>
+        <button onclick="testGetCourses()">Test Get Courses</button>
+        <button onclick="setupSheets()">Setup Sheets (Run First)</button>
         
-        <!-- Logged In View (Initially hidden) -->
-        <div id="welcome-view" class="hidden text-center p-8 bg-gray-50 rounded-lg">
-            <svg class="mx-auto h-12 w-12 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            <h2 class="mt-4 text-2xl font-semibold text-gray-900">Welcome, <span id="welcome-name"></span>!</h2>
-            <p class="mt-2 text-gray-600">You have successfully authenticated with Google Apps Script.</p>
-            <button id="logout-btn" class="mt-6 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150">
-                Log Out
-            </button>
-        </div>
+        <div id="testResult" class="result"></div>
+        <div id="responseData" style="margin-top: 10px; display: none;"></div>
     </div>
 
     <script>
-        // 🚨 CRITICAL: REPLACE THIS URL with your deployed Apps Script Web App URL
-        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwR_XPJ7HMx-bO-_bW2Gl4dL3gDfOjTDAPnJbzl2iWMP9pTjdoDhTBzt7oTE9IuqI7oFA/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwAedbTghrO10YxXeW8UP8RpHrQpLanWTjilDpWhimVMHymGSqeyFw8X_o1Jj39-Jjq/exec';
 
-        // UI elements
-        const authView = document.getElementById('auth-view');
-        const welcomeView = document.getElementById('welcome-view');
-        const viewTitle = document.getElementById('view-title');
-        const messageArea = document.getElementById('message-area');
-        const signupForm = document.getElementById('signup-form');
-        const loginForm = document.getElementById('login-form');
-        const toggleViewButton = document.getElementById('toggle-view');
-        const logoutButton = document.getElementById('logout-btn');
-        const welcomeName = document.getElementById('welcome-name');
-
-        // State
-        let isLoginView = false;
-
-        // --- Utility Functions ---
-
-        function showMessage(type, content) {
-            messageArea.textContent = content;
-            messageArea.classList.remove('hidden', 'bg-red-100', 'bg-green-100', 'text-red-700', 'text-green-700');
-            if (type === 'success') {
-                messageArea.classList.add('bg-green-100', 'text-green-700');
-            } else if (type === 'error') {
-                messageArea.classList.add('bg-red-100', 'text-red-700');
-            }
-            // Clear message after 5 seconds
-            setTimeout(() => { messageArea.classList.add('hidden'); }, 5000);
-        }
-        
-        function setView(loggedIn = false, name = '') {
-            if (loggedIn) {
-                authView.classList.add('hidden');
-                welcomeView.classList.remove('hidden');
-                welcomeName.textContent = name;
-            } else {
-                authView.classList.remove('hidden');
-                welcomeView.classList.add('hidden');
-                // Ensure we are back on the signup form by default on logout
-                showSignupView();
-            }
-        }
-
-        function showLoginView() {
-            isLoginView = true;
-            viewTitle.textContent = "Log In";
-            signupForm.classList.add('hidden');
-            loginForm.classList.remove('hidden');
-            toggleViewButton.textContent = "Don't have an account? Switch to Sign Up";
-            messageArea.classList.add('hidden');
-        }
-
-        function showSignupView() {
-            isLoginView = false;
-            viewTitle.textContent = "Sign Up";
-            loginForm.classList.add('hidden');
-            signupForm.classList.remove('hidden');
-            toggleViewButton.textContent = "Already have an account? Switch to Log In";
-            messageArea.classList.add('hidden');
-        }
-
-        // --- Event Handlers ---
-
-        async function submitForm(e, action) {
-            e.preventDefault();
-
-            // Disable buttons and show loading state
-            const button = e.target.querySelector('button[type="submit"]');
-            const originalText = button.textContent;
-            button.disabled = true;
-            button.textContent = 'Processing...';
-
-            // Create form data object
-            const formData = new FormData(e.target);
-            formData.append('action', action); // Append the action for Apps Script
-
+        async function callAPI(action, params = {}) {
             try {
-                const response = await fetch(APP_SCRIPT_URL, {
-                    method: 'POST',
-                    body: formData,
+                const formData = new URLSearchParams();
+                formData.append('action', action);
+                Object.keys(params).forEach(key => {
+                    formData.append(key, params[key]);
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
+                console.log(`Calling: ${action}`, params);
                 
-                if (data.status === 'success') {
-                    showMessage('success', data.message);
-                    // On success, transition to the welcome view
-                    setView(true, data.name || formData.get('name') || 'User');
-                    e.target.reset();
-                } else {
-                    showMessage('error', data.message || 'An unknown error occurred.');
-                }
-
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                });
+                
+                const text = await response.text();
+                console.log('Raw response:', text);
+                
+                return JSON.parse(text);
             } catch (error) {
-                console.error('Fetch Error:', error);
-                showMessage('error', 'Network error. Please check the Apps Script URL and deployment status.');
-            } finally {
-                button.disabled = false;
-                button.textContent = originalText;
+                console.error('API call failed:', error);
+                return { success: false, error: error.toString() };
             }
         }
 
-        // --- Main Initialization ---
+        async function testConnection() {
+            const result = await callAPI('test');
+            displayResult('testConnection', result);
+        }
 
-        toggleViewButton.addEventListener('click', () => {
-            isLoginView ? showSignupView() : showLoginView();
-        });
+        async function testLogin() {
+            const result = await callAPI('login', {
+                email: 'student@example.com',
+                password: 'password123'
+            });
+            displayResult('testLogin', result);
+        }
 
-        signupForm.addEventListener('submit', (e) => submitForm(e, 'SIGNUP'));
-        loginForm.addEventListener('submit', (e) => submitForm(e, 'LOGIN'));
-        logoutButton.addEventListener('click', () => setView(false));
-        
-        // Start on the Sign Up view
-        showSignupView();
-        
+        async function testGetCourses() {
+            const result = await callAPI('getCourseContent');
+            displayResult('testGetCourses', result);
+        }
+
+        async function setupSheets() {
+            const result = await callAPI('setupSheets');
+            displayResult('setupSheets', result);
+        }
+
+        function displayResult(testName, result) {
+            const resultDiv = document.getElementById('testResult');
+            const dataDiv = document.getElementById('responseData');
+            
+            if (result.success) {
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `<strong>✅ ${testName} SUCCESS:</strong> ${result.message || 'Request completed successfully'}`;
+            } else {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `<strong>❌ ${testName} FAILED:</strong> ${result.error || 'Unknown error'}`;
+            }
+            
+            dataDiv.style.display = 'block';
+            dataDiv.innerHTML = `<strong>Response Data:</strong><pre>${JSON.stringify(result, null, 2)}</pre>`;
+        }
+
+        // Test connection on load
+        window.onload = testConnection;
     </script>
 </body>
 </html>
